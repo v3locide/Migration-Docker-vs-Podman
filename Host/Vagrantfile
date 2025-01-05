@@ -1,0 +1,23 @@
+# Vagrantfile for Ubuntu 22.04 LTS with Private (Static) and Public Network
+Vagrant.configure("2") do |config|
+  # Specify the Ubuntu version
+  config.vm.box = "ubuntu/jammy64"
+
+  # Assign a name to the VM
+  config.vm.hostname = "ubuntu-criu-Host"
+
+  # Private network with static IP
+  config.vm.network "private_network", ip: "192.168.50.11"
+
+  # Public network (bridged)
+  config.vm.network "public_network"
+
+  # Shared directory
+  config.vm.synced_folder "C:\\Users\\mohca\\Desktop\\Programming\\France\\Sorbonne\\Modules\\NEVA\\Project\\app", "/home/host/app"
+
+  # Resources (optional: customize CPU and RAM)
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "4096"
+    vb.cpus = 4
+  end
+end
