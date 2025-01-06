@@ -43,10 +43,13 @@ echo "Image build time: ${img_build_time}s" > host_stats.txt
 echo ""
 
 # Step 1: Run the Docker container
+echo "Starting container..."
 #busybox:
 #docker run -d --rm --name $container_name $container_image /bin/sh -c 'i=0; while true; do echo $i; i=$(expr $i + 1); sleep 3; done'
 #frontend-app:
-docker run -p $app_port:$container_port -d--name $container_name $container_image
+docker run -p $app_port:$container_port -d --name $container_name $container_image
+docker ps | grep "$container_name"
+echo ""
 echo "Container logs:"
 docker logs $container_name
 echo ""

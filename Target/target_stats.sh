@@ -13,12 +13,12 @@ container_size="null"
 iteration=0
 container_name="vite-app" #"looper" #"vite-app"
 target_server="192.168.50.12"
-host_server="192.168.50.11" #"26.91.161.197" #"192.168.50.11"
+host_server="26.211.193.71" #"26.91.161.197" #"192.168.50.11"
 container_image="vite-app-img" #"busybox" #"vite-app-img"
 dockerfile=~/app/.
 host_user="host"
 target_user="target" #"target"
-host_port=22 #22 #2222
+host_port=2222 #22 #2222
 iperf_port=12345
 app_port=8081
 container_port=80
@@ -53,6 +53,7 @@ iperf -s -i 1 -B "$target_server" --port "$iperf_port" | while read -r line; do
     if echo "$line" | grep -q "local $target_server port $iperf_port connected with $host_server"; then
         scp -P $host_port $host_user@$host_server:/home/$host_user/$container_name-checkpoint.zip /home/$target_user/
         pkill iperf
+        break
     fi
 done
 
@@ -79,7 +80,10 @@ checkpoint_size=$(sudo ls -lh /var/lib/docker/containers/$(docker ps -aq --no-tr
 
 echo "Migration end: $timestamp"
 echo ""
-
+echo "Started container $container_name"
+docker ps | grep "$container_name"
+echo ""
+sleep 2
 echo "Container logs:"
 docker logs $container_name
 echo ""
@@ -92,40 +96,40 @@ echo "Capturing CPU and memory usage for $container_name container..."
 echo""
 
 while kill -0 $! 2>/dev/null; do
-
+    
     # Capture target_stats for the container
     target_stats=$(docker stats --no-stream --format "{{.CPUPerc}},{{.MemUsage}},{{.MemPerc}}" $container_name)
-
+    
     if [[ -z "$target_stats" ]]; then
         continue  # Skip iteration if target_stats are empty
     fi
-
+    
     # Extract CPU and memory values
     cpu=$(echo "$target_stats" | awk -F',' '{print $1}' | tr -d '%')
     echo "CPU usage: $cpu%"
     mem=$(echo "$target_stats" | awk -F',' '{print $2}' | awk '{print $1}')
     mem_percent=$(echo "$target_stats" | awk -F',' '{print $3}' | tr -d '%')
     echo "Mem usage: $mem ($mem_percent%)"
-
+    
     mem_value=$(echo "$mem" | sed 's/[a-zA-Z]//g' | awk '{print $1}')
     mem_unit=$(echo "$mem" | sed 's/[0-9]//g')  # Extracts the unit (e.g., KiB, MiB)
-
+    
     # Check if current CPU is higher than top_cpu
     if (( $(echo "$cpu > $top_cpu" | bc -l) )); then
         top_cpu=$cpu
     fi
-
+    
     # Check if current memory is higher than top_mem
     if (( $(echo "$mem_value > $top_mem" | bc -l) )); then
         top_mem=$mem_value
         top_mem_unit=$mem_unit
     fi
-
+    
     # Check if current Mem% is higher than top_mem_percent
     if (( $(echo "$mem_percent > $top_mem_percent" | bc -l) )); then
         top_mem_percent=$mem_percent
     fi
-
+    
     # Accumulate values for averages
     total_cpu=$(echo "$total_cpu + $cpu" | bc -l)
     total_mem=$(echo "$total_mem + $mem_value" | bc -l)
@@ -176,6 +180,6 @@ echo ""
 echo "All tasks completed successfully!"
 
 
-# Note: the container size difference between the host and target 
-# is due to the container log file being smaller at the start of 
+# Note: the container size difference between the host and target
+# is due to the container log file being smaller at the start of
 # the container in the target server.
