@@ -46,12 +46,9 @@ echo ""
 echo "Starting container..."
 #busybox:
 #docker run -d --rm --name $container_name $container_image /bin/sh -c 'i=0; while true; do echo $i; i=$(expr $i + 1); sleep 3; done'
-#frontend-app:
+#vite-app:
 docker run -p $app_port:$container_port -d --name $container_name $container_image
 docker ps | grep "$container_name"
-echo ""
-echo "Container logs:"
-docker logs $container_name
 echo ""
 
 # Step 2: Let the container run for 50 seconds
@@ -105,6 +102,11 @@ while kill -0 $! 2>/dev/null; do
     echo ""
     sleep 1
 done
+
+# Show container logs before migration
+echo "Container logs:"
+docker logs $container_name
+echo ""
 
 # Step 4: Start the migration
 echo "Press [Enter] to start the migration:"
