@@ -1,6 +1,9 @@
 # vagrant folders
 **/.vagrant
 
+# Setup folder
+Setup/
+
 # Logs
 **/logs
 **/*.log

@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "public_network"
 
   # Shared directory
-  config.vm.synced_folder "/path/to/app", "/home/host/app"
+  #config.vm.synced_folder "/path/to/app", "/home/host/app"
 
   # Resources (optional: customize CPU and RAM)
   config.vm.provider "virtualbox" do |vb|
