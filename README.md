@@ -36,11 +36,16 @@ cd ../Target/
 vagrant up
 ```
 4. **After deploying both servers and installing the required tools in each of them**, clone this repository again in both servers (Host + Target) ```git clone https://github.com/v3locide/Migration-Docker-vs-Podman.git``` (alternatively, you can make the repository as a shared directory between both VMs from your local machine). 
-5. make sure the script files in ```./Host/``` and ```./Target/``` are executable.
+5. make sure the script files in ```./Host/``` and ```./Target/``` are executable in both servers.
 ```bash
-cd Host #Target
-chmod +x docker_host_stats.sh # migration script with docker.
-chmod +x podman_host_stats.sh # migration with podman.
+# Host server:
+cd Host
+chmod +x docker_host_stats.sh # Host migration script with docker.
+chmod +x podman_host_stats.sh # Host migration script with podman.
+
+# Target server:
+chmod +x docker_target_stats.sh # Target migration script with docker.
+chmod +x podman_target_stats.sh # Target migration script with podman.
 ```
 6. Run the scripts for migration:
   * Docker:
@@ -73,3 +78,4 @@ cd Target
 * **Complex network configurations:** Migrating containers with complex network configurations can be challenging and may require additional steps.
 
 **Demo**
+   * I made a demo video so you can see how the live container migration  of a simple web application works with Docker and Podman: 
