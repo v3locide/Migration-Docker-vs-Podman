@@ -7,12 +7,12 @@ This project investigates the live migration of containers between two servers u
 **Prerequisites**
 
 * **Hardware:**
-    * 2 machines (Host & Target): 4 CPUs, 4GB RAM, 20GB free disk space, Ubuntu 22.04.1 
+    * 2 servers (Host & Target): 4 CPUs, 4GB RAM, 20GB free disk space, Ubuntu 22.04.1 
 * **Software:**
-    * Docker Engine or Podman
-    * CRIU
-    * Node.js and npm 
-    * Shared Storage (e.g., NFS, SCP) 
+    * Vagrant.
+    * Docker Engine or Podman.
+    * CRIU.
+    * Shared Storage (e.g., NFS, SCP).
 
 **Installation**
 
@@ -24,6 +24,45 @@ This project investigates the live migration of containers between two servers u
 
 2. **Install criu:**
     * https://criu.org/Installation
+
+**Project Setup**
+
+1. Clone this repository ```git clone https://github.com/v3locide/Migration-Docker-vs-Podman.git```
+2. Deploy the Host and Target VMs using the provided Vagrant files (or you can create your VMs manually).
+```bash
+cd Host
+vagrant up
+cd ../Target/
+vagrant up
+```
+4. **After deploying both servers and installing the required tools in each of them**, clone this repository again in both servers (Host + Target) ```git clone https://github.com/v3locide/Migration-Docker-vs-Podman.git``` (alternatively, you can make the repository as a shared directory between both VMs from your local machine). 
+5. make sure the script files in ```./Host/``` and ```./Target/``` are executable.
+```bash
+cd Host #Target
+chmod +x docker_host_stats.sh # migration script with docker.
+chmod +x podman_host_stats.sh # migration with podman.
+```
+6. Run the scripts for migration:
+  * Docker:
+```bash
+# Host server:
+cd Host
+./docker_host_stats.sh
+
+# Target server:
+cd Target
+./docker_target_stats.sh
+```
+* Podman:
+```bash
+# Host server:
+cd Host
+./podman_host_stats.sh
+
+# Target server:
+cd Target
+./podman_target_stats.sh
+```
 
 **Limitations**
 
